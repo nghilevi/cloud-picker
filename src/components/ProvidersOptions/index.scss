@@ -1,0 +1,49 @@
+@use "../../vars" as var;
+
+.providers {
+    margin-top: 50px
+}
+
+.providers-list {
+    display: flex;
+    list-style: none;
+    width: 50%;
+    margin-top: var.$space-l;
+}
+
+.providers-list-item {
+    width: 134px;
+    height: 134px;
+    margin-right: 10px;
+    margin-top: 10px;
+    border: 1px solid var.$color-grey-dark;
+    background-color: white;
+
+    // button styles
+    cursor: pointer;
+    &.selected,
+    &:hover,
+    &:focus,
+    &:focus-visible {
+        border: 2px solid var.$color-red;
+        transition: border 0.2s ease-in-out;
+    }
+}
+
+.providers-list-item img {
+    margin: auto;
+    width: 85px;
+}
+
+@media (max-width: 1000px) {
+    .providers-list-item {
+        width: 100px;
+        height: 100px;
+    }
+}
+
+@media (max-width: 800px) {
+    .providers-list {
+        flex-direction: column;
+    }
+}

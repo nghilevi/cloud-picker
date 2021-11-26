@@ -1,0 +1,27 @@
+@use "./vars" as var;
+
+ol,
+li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+ul,
+ol {
+    padding-inline-start: 0;
+}
+
+li button {
+    width: 100%;
+}
+
+.app {
+    margin: 2% 15%;
+    border: 1px solid var.$color-grey-dark;
+    background: whitesmoke;
+    border-radius: 5px;
+    height: 50%;
+    padding: 0 var.$space-l var.$space-l var.$space-l;
+    box-shadow: 0 8px 16px rgb(58 58 68 / 12%), 0 16px 32px rgb(90 91 106 / 12%);
+}

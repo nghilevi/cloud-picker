@@ -1,0 +1,23 @@
+@use "../../vars" as var;
+
+.clouds-list {
+}
+
+.clouds-list-item {
+    margin: 5px 0;
+    text-align: left;
+    padding-left: var.$space-l;
+    // button styles
+    cursor: pointer;
+    &.selected,
+    &:hover,
+    &:focus,
+    &:focus-visible {
+        border: 2px solid var.$color-red;
+        transition: border 0.2s ease-in-out;
+    }
+}
+
+.cloud-description {
+    color: var.$color-grey-dark;
+}

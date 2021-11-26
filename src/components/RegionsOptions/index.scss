@@ -1,0 +1,28 @@
+@use "../../vars" as var;
+
+.regions {
+    margin-top: 50px
+}
+
+.regions-list {
+    display: flex;
+    border-bottom: 2px solid var.$color-grey-light;
+    margin-top: var.$space-l;
+    margin-bottom: var.$space-l;
+}
+
+.regions-list-item {
+    background: none;
+    width: 120px;
+    border: none;
+    padding: var.$space-m 0;
+
+    // button styles
+    cursor: pointer;
+    &.selected,
+    &:hover,
+    &:focus,
+    &:focus-visible {
+        border-bottom: 2px solid var.$color-red;
+    }
+}

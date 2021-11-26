@@ -1,46 +1,127 @@
-# Getting Started with Create React App
+<img src="docs/icon.jpeg" align="right" />
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Cloud Picker
+>  A lightweight and easy-to-use cloud picker.
 
-## Available Scripts
+## Usage
 
-In the project directory, you can run:
+When first open, the app loads cloud data and, at the same time, asks the user for geolocation information. Based on these, the app will point the user to the service cloud list where there is a nearest service cloud to the user. The cloud provider and region will therefore be preselected for the user. Users can select options (provider, region, or service cloud) by mouse click or using `tab` to navigate and `enter` to select.
 
-### `npm start`
+<img src="docs/screenshot.png" />
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+If user's geolocation can not be obtained (the user do not wish to share their geolocation, or if geolocation is not available on their devices, etc.), [the Prime Meridian (Greenwich) geolocation](https://en.wikipedia.org/wiki/Prime_meridian_(Greenwich)) will be used as default values to calculate the distance.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+If cloud data fails to load, an error message will be shown, and the app will not be available to use.
 
-### `npm test`
+## Running the app
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Below are some useful commands:
 
-### `npm run build`
+Getting started and running the app locally
+```bash
+npm install
+npm start
+```
+Run unit testing
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```bash
+npm test
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Run test with coverage report
+```bash
+npm run cov
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Analyze code bundle
+```bash
+npm run build
+npm run analyze
+```
 
-### `npm run eject`
+## App structure
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+`src`
+contains all the needed source code.  
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+`components`
+contains all components that serve as building blocks for `CloudPicker` and the whole app.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+`utils`
+contains all the common logic that is shared between `components` and `hooks`. 
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+`hooks`
+contains all custom React hooks whose logic can also be used by multiple components. This modularity helps improve reusability and testability, which also leads to overall enhanced maintainability and scalability of the app.
 
-## Learn More
+### other files
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+`src/App.tsx`: the entry of the app. It is a wrapper component for `CloudPicker`, and also feed data to `
+`CloudPicker`.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+`_var.scss`
+contains shared variables and other scss files named the same or colocate with the component that they support.
+
+`ErrorBoundary.tsx`
+React components that catch JavaScript errors anywhere in their child component tree, log those errors, and display a fallback UI instead of the component tree that crashed. Read more about this [here](https://reactjs.org/docs/error-boundaries.html).
+## App flow
+
+### 1/ Fetching data
+As mentioned earlier in **Usage** section, the app starts two things in parallel when it is opened: 
+- fetch cloud data 
+- fetch user geolocation (which may require user permission) 
+
+The cloud data may be loaded before geolocation is obtained. If loaded data is shown first and geolocation is obtained later, the app will need to re-render the UI to reflect the distance.
+To avoid this, in the current implementation, cloud data is only shown after geolocation is resolved. 
+
+Note that, it does not matter if geolocation can be obtained or not, as long as cloud data is loaded successfully from Aiven server, the app will be usable (user can interact and select the cloud) since Greenwhich geolocation is used as the fallback value for user geolocation. (The use of Greenwhich geolocation is optional, we can just simply skip calculating the distance as well as sorting ops. This is for illustration purposes only)
+
+### 2/ Transforming data
+When both cloud data and geolocation are resolved, the data transformation process kicks in. It transforms 'raw' cloud data fetched from the server to a format/structure that the app can easily use. All the logic of this process is implemented in custom hooks and `utils/transform` module.
+
+In the `test/mock.tsx`, you will find an example of what original fetched vs transformed data looks like.
+
+The idea is UI components only needs to focus on presenting the data without doing any transforming, filtering, or calculation on every user interaction which not only brings benefits in terms of low latency, enhanced responsiveness, and UX, but also in terms of "separation of concerns"  - the UI only do its job of presentation.
+
+## Performance notes
+
+The transform module does the heavy lifting of transforming a list of clouds data fetched from the backend to a "table" (Javascript object) that is consumed by the UI components. 
+
+It does so by first mapping each fetched list item to a new JS object with new/additional properties such as `distance`, which is calculated using [haversine formula](https://en.wikipedia.org/wiki/Haversine_formula) and user geolocation. 
+
+It then sorts the mapped list based on `distance` so the items with the smallest distances are ranked first.
+
+It then reduces the mapped list into a single object where each property/key is a cloud provider name (such as "Azure" or "Google Cloud") and the key's corresponding value is another object whose properties are regions such as "Asia", "Europe" etc.
+
+Overall, these 3 steps may require looping through the list 3 times. While looping through N items costs `O(N)`, sorting may cost `O(NlogN)`. So in general the complexity to run these can be considered as `O(NlogN)`, which is still acceptable.
+
+Finally, it loops through the reduced object to do some "cleaning" by removing redundant items such as empty array as well as adding newly aggregated data such as a list of alphabetically sorted providers/regions by cloud provider. This process takes minimal cost since we don't have to loop through every original list item again, and the number of cloud providers and regions is very limited.
+
+Later, when user interacts with the filter options, the app no longer needs to do any real filtering logic behind the scene. All it does is retrieve the data from the transformed object, which only costs `O(1)` complexity.
+
+### Other approaches
+
+If the list of clouds is huge, say more than 10k service clouds, or if it takes time to transform the data, we can also come up with better approaches to avoid sorting all data at once, which may cause blocking in the UI.
+
+One way is, in the first iteration through the cloud list (i.e mapping), we can already figure out which service cloud from each region and provider is the closest ones to the user. Based on that we know what to show to the user from the start. If the user navigates to other filtering options, we can do sorting accordingly, only for that category, and also save the sorted result in the memory. In other words, instead of a big bang sorting in the beginning, we sort (and save the sorted result) on demand.
+
+## Future improvements notes
+
+Below are possible improvements:
+- Responsive design
+- Add more and better tests especially to handle unhappy cases, crashes, etc. e.g corrupted response data
+- Add E2E tests e.g for selection flow, running against different real browsers
+- In reality, user geolocation may not be shown as well as many UX concerns should be solved.
+- May be apply some good practices and patterns here and there e.g using Error Boundaries more etc.
+- Performance can also be improved even more to enhance responsiveness in case of huge data (as mentioned earlier in *Performance notes* section)
+
+## Some other notes
+
+The app is lightweight. At the time of this writing, it is only 136,3 KB.
+Bundle size is important particularly for users on low bandwidth connections.
+
+All attributions are commented in the code.
+
+Coverage reports can be found under coverage folder.
+
+Github Actions is used for CI. See the `.github` folder.
+
