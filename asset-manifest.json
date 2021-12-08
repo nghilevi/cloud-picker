@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/cloud-picker/static/css/main.2799689d.chunk.css",
+    "main.js": "/cloud-picker/static/js/main.3b4b8725.chunk.js",
+    "main.js.map": "/cloud-picker/static/js/main.3b4b8725.chunk.js.map",
+    "runtime-main.js": "/cloud-picker/static/js/runtime-main.0caab57d.js",
+    "runtime-main.js.map": "/cloud-picker/static/js/runtime-main.0caab57d.js.map",
+    "static/js/2.de386922.chunk.js": "/cloud-picker/static/js/2.de386922.chunk.js",
+    "static/js/2.de386922.chunk.js.map": "/cloud-picker/static/js/2.de386922.chunk.js.map",
+    "index.html": "/cloud-picker/index.html",
+    "static/css/main.2799689d.chunk.css.map": "/cloud-picker/static/css/main.2799689d.chunk.css.map",
+    "static/js/2.de386922.chunk.js.LICENSE.txt": "/cloud-picker/static/js/2.de386922.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.0caab57d.js",
+    "static/js/2.de386922.chunk.js",
+    "static/css/main.2799689d.chunk.css",
+    "static/js/main.3b4b8725.chunk.js"
+  ]
+}
