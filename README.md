@@ -7,6 +7,8 @@
 
 When first open, the app loads cloud data and, at the same time, asks the user for geolocation information. Based on these, the app will point the user to the service cloud list where there is a nearest service cloud to the user. The cloud provider and region will therefore be preselected for the user. Users can select options (provider, region, or service cloud) by mouse click or using `tab` to navigate and `enter` to select.
 
+[`Demo`](https://vinhnghi223.github.io/cloud-picker/)
+
 <img src="docs/screenshot.png" />
 
 If user's geolocation can not be obtained (the user do not wish to share their geolocation, or if geolocation is not available on their devices, etc.), [the Prime Meridian (Greenwich) geolocation](https://en.wikipedia.org/wiki/Prime_meridian_(Greenwich)) will be used as default values to calculate the distance.
