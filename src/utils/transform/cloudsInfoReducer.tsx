@@ -1,19 +1,22 @@
 import { Cloud } from "../types"
 
+// WARNING: this function should only be used with reduce
+// the use of spread operator is controversial according to this article: https://www.richsnapp.com/article/2019/06-09-reduce-spread-anti-pattern
 const cloudsInfoReducer = (clouds: any, cloud: Cloud) => {
-    if (!clouds[cloud.provider]) { // first time encounter the provider
-        clouds[cloud.provider] = { // populate regions, nearestRegion
+    const clonedClouds = {...clouds}
+    if (!clonedClouds[cloud.provider]) { // first time encounter the provider
+        clonedClouds[cloud.provider] = { // populate regions, nearestRegion
             nearestRegion: cloud.region,
             [cloud.region]: [cloud]
         }
     } else {
-        if (clouds[cloud.provider][cloud.region]) { // add service cloud filterd by region and provider
-            clouds[cloud.provider][cloud.region].push(cloud)
+        if (clonedClouds[cloud.provider][cloud.region]) { // add service cloud filterd by region and provider
+            clonedClouds[cloud.provider][cloud.region].push(cloud)
         } else {
-            clouds[cloud.provider][cloud.region] = []
+            clonedClouds[cloud.provider][cloud.region] = []
         }
     }
-    return clouds
+    return clonedClouds
 }
 
 export { cloudsInfoReducer }
