@@ -3,6 +3,8 @@
 # Cloud Picker
 >  A lightweight and easy-to-use cloud picker.
 
+Last updated: 2021
+
 ## Usage
 
 When first open, the app loads cloud data and, at the same time, asks the user for geolocation information. Based on these, the app will point the user to the service cloud list where there is a nearest service cloud to the user. The cloud provider and region will therefore be preselected for the user. Users can select options (provider, region, or service cloud) by mouse click or using `tab` to navigate and `enter` to select.
